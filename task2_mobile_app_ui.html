@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlamourHouse – Salon Booking App UI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --purple: #7c3aed;
+    --purple-light: #f3f0ff;
+    --purple-mid: #8b5cf6;
+    --rose: #f43f5e;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --surface: #f9fafb;
+    --white: #ffffff;
+    --success: #10b981;
+  }
+  body { font-family: 'Inter', sans-serif; background: #f0f0f5; min-height: 100vh; padding: 40px 20px; }
+  h1 { text-align: center; font-size: 28px; font-weight: 700; color: #111; margin-bottom: 6px; }
+  .page-sub { text-align: center; color: #6b7280; font-size: 15px; margin-bottom: 40px; }
+
+  .screens-wrapper { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+
+  /* PHONE FRAME */
+  .phone { background: #1c1c1e; border-radius: 44px; padding: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 320px; flex-shrink: 0; }
+  .phone-inner { background: var(--white); border-radius: 34px; overflow: hidden; height: 640px; overflow-y: auto; scroll-behavior: smooth; position: relative; }
+  .phone-inner::-webkit-scrollbar { display: none; }
+  .phone-notch { background: #1c1c1e; width: 100px; height: 26px; border-radius: 0 0 16px 16px; margin: 0 auto 0; display: block; position: relative; z-index: 10; }
+  .screen-label { text-align: center; font-size: 13px; font-weight: 600; color: #6b7280; margin-top: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
+
+  /* STATUS BAR */
+  .status-bar { display: flex; justify-content: space-between; padding: 10px 20px 6px; font-size: 12px; font-weight: 600; color: var(--text); }
+
+  /* === SCREEN 1: ONBOARDING === */
+  .onboarding { background: linear-gradient(160deg, var(--purple) 0%, #a855f7 100%); min-height: 640px; display: flex; flex-direction: column; }
+  .onboard-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 28px 20px; text-align: center; }
+  .onboard-icon { font-size: 72px; margin-bottom: 24px; }
+  .onboard-title { font-size: 26px; font-weight: 700; color: white; line-height: 1.2; margin-bottom: 10px; }
+  .onboard-sub { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+  .onboard-dots { display: flex; gap: 6px; justify-content: center; margin: 24px 0; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); }
+  .dot.active { background: white; width: 20px; border-radius: 4px; }
+  .onboard-footer { padding: 20px 24px 36px; }
+  .btn-full { width: 100%; padding: 14px; background: white; color: var(--purple); border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; margin-bottom: 10px; }
+  .btn-ghost { width: 100%; padding: 14px; background: rgba(255,255,255,0.15); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+
+  /* === SCREEN 2: HOME === */
+  .app-screen { background: var(--surface); min-height: 640px; }
+  .app-header { background: var(--white); padding: 14px 20px 16px; border-bottom: 1px solid var(--border); }
+  .app-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .greeting { font-size: 13px; color: var(--muted); }
+  .greeting strong { display: block; font-size: 17px; color: var(--text); font-weight: 600; }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--purple-light); color: var(--purple); font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .search-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .section-pad { padding: 16px 20px; }
+  .section-pad-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--text); display: flex; justify-content: space-between; }
+  .section-pad-title span { font-size: 13px; font-weight: 500; color: var(--purple); }
+
+  .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+  .categories::-webkit-scrollbar { display: none; }
+  .cat-pill { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 64px; }
+  .cat-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: var(--purple-light); }
+  .cat-icon.active { background: var(--purple); }
+  .cat-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  .featured-card { background: linear-gradient(135deg, var(--purple) 0%, #a855f7 100%); border-radius: 16px; padding: 20px; color: white; margin-bottom: 16px; }
+  .featured-badge { background: rgba(255,255,255,0.2); font-size: 11px; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 10px; }
+  .featured-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .featured-sub { font-size: 13px; opacity: 0.8; margin-bottom: 14px; }
+  .featured-btn { background: white; color: var(--purple); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; display: inline-block; }
+
+  .salon-card { background: white; border-radius: 14px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 12px; display: flex; }
+  .salon-img { width: 90px; min-width: 90px; background: linear-gradient(135deg, #fce7f3, #f3e8ff); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+  .salon-info { padding: 12px 14px; flex: 1; }
+  .salon-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .salon-type { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .salon-meta { display: flex; gap: 12px; font-size: 12px; }
+  .rating { color: #f59e0b; font-weight: 600; }
+  .distance { color: var(--muted); }
+  .price-tag { background: #ecfdf5; color: #059669; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; margin-top: 6px; display: inline-block; }
+
+  /* BOTTOM NAV */
+  .bottom-nav { position: sticky; bottom: 0; background: white; border-top: 1px solid var(--border); display: flex; padding: 10px 0 16px; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); cursor: pointer; }
+  .nav-item.active { color: var(--purple); }
+  .nav-icon { font-size: 20px; }
+
+  /* === SCREEN 3: BOOKING FLOW === */
+  .booking-header { background: white; padding: 14px 20px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border); }
+  .back-btn { font-size: 20px; cursor: pointer; color: var(--text); }
+  .booking-title { font-size: 16px; font-weight: 600; }
+  .progress-bar { height: 4px; background: #e5e7eb; margin: 0; }
+  .progress-fill { height: 4px; background: var(--purple); width: 66%; border-radius: 2px; }
+
+  .specialist-scroll { display: flex; gap: 12px; padding: 16px 20px; overflow-x: auto; }
+  .specialist-scroll::-webkit-scrollbar { display: none; }
+  .specialist { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .spec-avatar { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 3px solid transparent; }
+  .spec-avatar.selected { border-color: var(--purple); }
+  .spec-name { font-size: 11px; font-weight: 500; text-align: center; color: var(--text); max-width: 64px; }
+  .spec-role { font-size: 10px; color: var(--muted); text-align: center; }
+
+  .cal-section { padding: 0 20px 16px; }
+  .cal-month { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; justify-content: space-between; }
+  .cal-days-header { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 8px; font-weight: 500; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; border-radius: 50%; cursor: pointer; font-weight: 500; }
+  .cal-day.empty { opacity: 0; }
+  .cal-day.past { color: var(--border); cursor: default; }
+  .cal-day.available { color: var(--text); }
+  .cal-day.available:hover { background: var(--purple-light); }
+  .cal-day.selected { background: var(--purple); color: white; }
+  .cal-day.today { border: 2px solid var(--purple); color: var(--purple); }
+
+  .time-slots { padding: 0 20px 16px; }
+  .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .time-slot { padding: 10px 8px; border: 1.5px solid var(--border); border-radius: 10px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: white; }
+  .time-slot.selected { border-color: var(--purple); background: var(--purple-light); color: var(--purple); }
+  .time-slot.unavailable { color: var(--border); cursor: default; background: var(--surface); }
+
+  .sticky-book { padding: 16px 20px 24px; background: white; border-top: 1px solid var(--border); }
+  .book-summary { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .book-price { font-size: 20px; font-weight: 700; color: var(--text); }
+  .book-duration { font-size: 13px; color: var(--muted); }
+  .btn-book { width: 100%; background: var(--purple); color: white; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+  /* === SCREEN 4: CONFIRMATION === */
+  .confirm-screen { background: white; min-height: 640px; display: flex; flex-direction: column; }
+  .confirm-hero { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); padding: 40px 28px 32px; text-align: center; }
+  .confirm-check { width: 72px; height: 72px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; }
+  .confirm-title { font-size: 22px; font-weight: 700; color: #064e3b; margin-bottom: 6px; }
+  .confirm-sub { font-size: 14px; color: #065f46; }
+  .confirm-card { margin: 20px 20px; background: white; border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .confirm-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .confirm-row:last-child { border-bottom: none; }
+  .confirm-icon { width: 36px; height: 36px; background: var(--purple-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .confirm-info label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .confirm-info p { font-size: 14px; font-weight: 600; color: var(--text); margin-top: 2px; }
+  .confirm-actions { padding: 0 20px 32px; }
+  .btn-add-cal { width: 100%; padding: 13px; border: 1.5px solid var(--purple); color: var(--purple); background: white; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; margin-bottom: 10px; }
+  .btn-home { width: 100%; padding: 13px; background: var(--purple); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+</style>
+</head>
+<body>
+
+<h1>GlamourHouse Salon — Booking App UI</h1>
+<p class="page-sub">Mobile App UI Design · Appointment Booking for GlamourHouse Salon, Pune · Task 2</p>
+
+<div class="screens-wrapper">
+
+  <!-- SCREEN 1: ONBOARDING -->
+  <div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-inner">
+        <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+        <div class="onboarding">
+          <div class="onboard-hero">
+            <div class="onboard-icon">💇‍♀️</div>
+            <div class="onboard-title">Your Beauty,<br>Perfectly Scheduled</div>
+            <div class="onboard-sub">Book salon services at GlamourHouse in seconds — choose your stylist, pick your time, and you're done.</div>
+            <div class="onboard-dots">
+              <div class="dot active"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+          </div>
+          <div class="onboard-footer">
+            <button class="btn-full">Get Started</button>
+            <button class="btn-ghost">Log In</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-label">1. Onboarding</div>
+  </div>
+
+  <!-- SCREEN 2: HOME -->
+  <div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-inner">
+        <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+        <div class="app-screen">
+          <div class="app-header">
+            <div class="app-header-top">
+              <div class="greeting"><span>Good morning 👋</span><strong>Priya</strong></div>
+              <div class="avatar">PS</div>
+            </div>
+            <div class="search-box">🔍 Search services, stylists...</div>
+          </div>
+
+          <div class="section-pad">
+            <div class="section-pad-title">Browse Services <span>See all</span></div>
+            <div class="categories">
+              <div class="cat-pill"><div class="cat-icon active">💈</div><div class="cat-label">Hair</div></div>
+              <div class="cat-pill"><div class="cat-icon">💅</div><div class="cat-label">Nails</div></div>
+              <div class="cat-pill"><div class="cat-icon">🧖</div><div class="cat-label">Facial</div></div>
+              <div class="cat-pill"><div class="cat-icon">💄</div><div class="cat-label">Makeup</div></div>
+              <div class="cat-pill"><div class="cat-icon">🛁</div><div class="cat-label">Spa</div></div>
+            </div>
+          </div>
+
+          <div class="section-pad" style="padding-top:0">
+            <div class="featured-card">
+              <div class="featured-badge">✨ Limited Offer</div>
+              <div class="featured-title">20% Off Hair Treatments</div>
+              <div class="featured-sub">Book before June 30 and save on all keratin & colour services</div>
+              <div class="featured-btn">Book Now →</div>
+            </div>
+          </div>
+
+          <div class="section-pad" style="padding-top:0">
+            <div class="section-pad-title">Nearby Stylists <span>See all</span></div>
+            <div class="salon-card">
+              <div class="salon-img">🪷</div>
+              <div class="salon-info">
+                <div class="salon-name">GlamourHouse — FC Road</div>
+                <div class="salon-type">Full Service Salon</div>
+                <div class="salon-meta">
+                  <span class="rating">★ 4.8</span>
+                  <span class="distance">0.4 km</span>
+                  <span class="distance">Open until 8pm</span>
+                </div>
+                <div class="price-tag">From ₹299</div>
+              </div>
+            </div>
+            <div class="salon-card">
+              <div class="salon-img">🌸</div>
+              <div class="salon-info">
+                <div class="salon-name">GlamourHouse — Koregaon Park</div>
+                <div class="salon-type">Full Service Salon</div>
+                <div class="salon-meta">
+                  <span class="rating">★ 4.6</span>
+                  <span class="distance">1.2 km</span>
+                  <span class="distance">Open until 8pm</span>
+                </div>
+                <div class="price-tag">From ₹299</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-nav">
+            <div class="nav-item active"><div class="nav-icon">🏠</div><span>Home</span></div>
+            <div class="nav-item"><div class="nav-icon">🔍</div><span>Explore</span></div>
+            <div class="nav-item"><div class="nav-icon">📅</div><span>Bookings</span></div>
+            <div class="nav-item"><div class="nav-icon">👤</div><span>Profile</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-label">2. Home</div>
+  </div>
+
+  <!-- SCREEN 3: BOOKING FLOW -->
+  <div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-inner">
+        <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+        <div class="app-screen" style="background:white;">
+          <div class="booking-header">
+            <div class="back-btn">←</div>
+            <div class="booking-title">Book Appointment</div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+
+          <!-- SPECIALISTS -->
+          <div class="section-pad" style="background:white; padding-bottom:4px;">
+            <div class="section-pad-title">Choose Stylist</div>
+          </div>
+          <div class="specialist-scroll">
+            <div class="specialist">
+              <div class="spec-avatar" style="background:#f3e8ff;">🧑‍🎨</div>
+              <div class="spec-name">Any Available</div>
+              <div class="spec-role">First open</div>
+            </div>
+            <div class="specialist">
+              <div class="spec-avatar selected" style="background:#fce7f3;">👩‍🦱</div>
+              <div class="spec-name">Meera Joshi</div>
+              <div class="spec-role">Hair Expert</div>
+            </div>
+            <div class="specialist">
+              <div class="spec-avatar" style="background:#ecfdf5;">👩‍💼</div>
+              <div class="spec-name">Divya Nair</div>
+              <div class="spec-role">Colourist</div>
+            </div>
+            <div class="specialist">
+              <div class="spec-avatar" style="background:#fef3c7;">👩‍🦰</div>
+              <div class="spec-name">Rekha Patil</div>
+              <div class="spec-role">Nail Artist</div>
+            </div>
+          </div>
+
+          <!-- DATE PICKER -->
+          <div class="cal-section">
+            <div class="section-pad-title" style="margin-bottom:12px;">Pick a Date</div>
+            <div class="cal-month"><span>June 2026</span><span style="font-size:18px;">‹ ›</span></div>
+            <div class="cal-days-header">
+              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-day empty"></div>
+              <div class="cal-day past">2</div>
+              <div class="cal-day past">3</div>
+              <div class="cal-day past">4</div>
+              <div class="cal-day past">5</div>
+              <div class="cal-day past">6</div>
+              <div class="cal-day past">7</div>
+              <div class="cal-day past">8</div>
+              <div class="cal-day past">9</div>
+              <div class="cal-day past">10</div>
+              <div class="cal-day past">11</div>
+              <div class="cal-day past">12</div>
+              <div class="cal-day past">13</div>
+              <div class="cal-day past">14</div>
+              <div class="cal-day past">15</div>
+              <div class="cal-day past">16</div>
+              <div class="cal-day past">17</div>
+              <div class="cal-day past">18</div>
+              <div class="cal-day past">19</div>
+              <div class="cal-day today">20</div>
+              <div class="cal-day available">21</div>
+              <div class="cal-day selected">22</div>
+              <div class="cal-day available">23</div>
+              <div class="cal-day available">24</div>
+              <div class="cal-day available">25</div>
+              <div class="cal-day available">26</div>
+              <div class="cal-day available">27</div>
+              <div class="cal-day available">28</div>
+              <div class="cal-day available">29</div>
+              <div class="cal-day available">30</div>
+            </div>
+          </div>
+
+          <!-- TIME SLOTS -->
+          <div class="time-slots">
+            <div class="section-pad-title" style="margin-bottom:10px;">Pick a Time · Mon, June 22</div>
+            <div class="time-grid">
+              <div class="time-slot unavailable">9:00 AM</div>
+              <div class="time-slot">10:00 AM</div>
+              <div class="time-slot selected">11:30 AM</div>
+              <div class="time-slot">1:00 PM</div>
+              <div class="time-slot unavailable">2:30 PM</div>
+              <div class="time-slot">4:00 PM</div>
+            </div>
+          </div>
+
+          <!-- BOOK BUTTON -->
+          <div class="sticky-book">
+            <div class="book-summary">
+              <div><div class="book-price">₹599</div><div class="book-duration">Keratin Treatment · 90 min</div></div>
+              <div style="font-size:12px; color:#6b7280; text-align:right;">Meera Joshi<br>Jun 22, 11:30 AM</div>
+            </div>
+            <button class="btn-book">Confirm Booking →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-label">3. Booking Flow</div>
+  </div>
+
+  <!-- SCREEN 4: CONFIRMATION -->
+  <div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-inner">
+        <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+        <div class="confirm-screen">
+          <div class="confirm-hero">
+            <div class="confirm-check">✓</div>
+            <div class="confirm-title">Booking Confirmed!</div>
+            <div class="confirm-sub">Your appointment is all set. See you soon! 🎉</div>
+          </div>
+
+          <div class="confirm-card">
+            <div class="confirm-row">
+              <div class="confirm-icon">🪷</div>
+              <div class="confirm-info"><label>Salon</label><p>GlamourHouse — FC Road, Pune</p></div>
+            </div>
+            <div class="confirm-row">
+              <div class="confirm-icon">✂️</div>
+              <div class="confirm-info"><label>Service</label><p>Keratin Hair Treatment</p></div>
+            </div>
+            <div class="confirm-row">
+              <div class="confirm-icon">👩‍🦱</div>
+              <div class="confirm-info"><label>Stylist</label><p>Meera Joshi</p></div>
+            </div>
+            <div class="confirm-row">
+              <div class="confirm-icon">📅</div>
+              <div class="confirm-info"><label>Date & Time</label><p>Monday, June 22 · 11:30 AM</p></div>
+            </div>
+            <div class="confirm-row">
+              <div class="confirm-icon">⏱️</div>
+              <div class="confirm-info"><label>Duration</label><p>90 minutes</p></div>
+            </div>
+            <div class="confirm-row">
+              <div class="confirm-icon">💳</div>
+              <div class="confirm-info"><label>Total</label><p>₹599 (pay at salon)</p></div>
+            </div>
+          </div>
+
+          <div style="margin: 0 20px; padding: 12px 14px; background:#fef9c3; border-radius:10px; font-size:13px; color:#854d0e; margin-bottom: 16px;">
+            📱 Confirmation SMS sent to +91 98765 43210
+          </div>
+
+          <div class="confirm-actions">
+            <button class="btn-add-cal">📅 Add to Calendar</button>
+            <button class="btn-home">Back to Home</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-label">4. Confirmation</div>
+  </div>
+
+</div>
+
+<div style="max-width:860px; margin:50px auto 0; background:white; border-radius:16px; padding:32px; border:1px solid #e5e7eb;">
+  <h2 style="font-size:20px; font-weight:700; margin-bottom:16px; color:#111;">Design Rationale</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; font-size:14px; color:#374151; line-height:1.7;">
+    <div><strong style="display:block; margin-bottom:6px;">Target Users</strong>Urban women and men aged 18–40 in Pune who book beauty services digitally. They expect fast booking (under 60 seconds), real-time availability, and instant confirmation.</div>
+    <div><strong style="display:block; margin-bottom:6px;">Booking Flow Logic</strong>4 taps to book: Home → Browse → Pick stylist + date + time → Confirm. Progressive disclosure keeps each screen focused. Progress bar shows users where they are.</div>
+    <div><strong style="display:block; margin-bottom:6px;">UX Decisions</strong>Sticky "Confirm Booking" button avoids scroll back. Greyed-out unavailable slots eliminate confusion. Specialist selector with avatars adds trust and personalization.</div>
+    <div><strong style="display:block; margin-bottom:6px;">Conversion Improvements</strong>vs. phone/WhatsApp booking: always-on availability display, no wait for confirmation call, SMS receipt, calendar sync, and instant rebooking from profile history.</div>
+  </div>
+</div>
+
+</body>
+</html>
